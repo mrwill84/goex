@@ -1,7 +1,7 @@
 package kraken
 
 import (
-	"github.com/nntaoli-project/goex"
+	"github.com/mrwill84/goex"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"

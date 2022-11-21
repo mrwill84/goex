@@ -3,8 +3,8 @@ package binance
 import (
 	"encoding/json"
 	"errors"
-	"github.com/nntaoli-project/goex"
-	"github.com/nntaoli-project/goex/internal/logger"
+	"github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 	"net/http"
 	"net/url"
 	"os"

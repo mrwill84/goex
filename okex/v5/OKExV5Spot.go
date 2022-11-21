@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/nntaoli-project/goex"
-	. "github.com/nntaoli-project/goex"
+	"github.com/mrwill84/goex"
+	. "github.com/mrwill84/goex"
 )
 
 type OKExV5Spot struct {

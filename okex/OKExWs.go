@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nntaoli-project/goex/internal/logger"
+	"github.com/mrwill84/goex/internal/logger"
 
-	. "github.com/nntaoli-project/goex"
+	. "github.com/mrwill84/goex"
 )
 
 type wsResp struct {

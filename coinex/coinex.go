@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/nntaoli-project/goex"
+	. "github.com/mrwill84/goex"
 )
 
 type CoinEx struct {

@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/nntaoli-project/goex"
+	. "github.com/mrwill84/goex"
 	"net/http"
 	"net/url"
 	"sort"

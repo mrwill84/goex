@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nntaoli-project/goex"
+	"github.com/mrwill84/goex"
 	"github.com/nubo/jwt"
 )
 
