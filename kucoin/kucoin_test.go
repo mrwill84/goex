@@ -1,8 +1,9 @@
 package kucoin
 
 import (
-	"github.com/mrwill84/goex"
 	"testing"
+
+	"github.com/mrwill84/goex"
 )
 
 var kc = New("", "", "")

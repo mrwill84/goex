@@ -1,10 +1,11 @@
 package hitbtc
 
 import (
-	"github.com/mrwill84/goex"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
+
+	"github.com/mrwill84/goex"
+	"github.com/stretchr/testify/require"
 )
 
 const (

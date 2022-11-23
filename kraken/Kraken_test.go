@@ -1,10 +1,11 @@
 package kraken
 
 import (
-	"github.com/mrwill84/goex"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/mrwill84/goex"
+	"github.com/stretchr/testify/assert"
 )
 
 var k = New(http.DefaultClient, "", "")

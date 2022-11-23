@@ -2,10 +2,11 @@ package binance
 
 import (
 	"fmt"
-	"github.com/mrwill84/goex"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/mrwill84/goex"
 )
 
 var ba = NewWithConfig(

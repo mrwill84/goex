@@ -1,9 +1,10 @@
 package allcoin
 
 import (
-	"github.com/mrwill84/goex"
 	"net/http"
 	"testing"
+
+	"github.com/mrwill84/goex"
 )
 
 var ac = New(http.DefaultClient, "", "")
