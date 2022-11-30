@@ -76,6 +76,7 @@ const (
 	PLACE_ORDER                 = "/api/v5/trade/order" //new v5
 	CANCEL_ORDER                = "/api/v5/trade/cancel-order"
 	GET_ORDER                   = "/api/v5/trade/order?ordId=%s&instId=%s"
+	GET_ORDER_BY_CID            = "/api/v5/trade/order?clOrdId=%s&instId=%s"
 	ORDER_HISTORY               = "/api/v5/trade/orders-history?instId=%s&instType=%s&before=%s&limit=1"
 	ORDER_HISTORY_WITHOUT_AFTER = "/api/v5/trade/orders-history?instId=%s&instType=%s&limit=2"
 	GET_INFO                    = ""
@@ -514,6 +515,73 @@ type BizWarmTipsV5 struct {
 	Code      string            `json:"code"`
 	Message   string            `json:"msg"`
 	OrderInfo []BaseOrderInfoV5 `json:"data"`
+}
+
+func (ok *OKExSwap) GetFutureOrderByCid(cid string, currencyPair CurrencyPair, contractType string) (*FutureOrder, error) {
+	var getOrderParam struct {
+		OrderId      string `json:"clOrdId"`
+		InstrumentId string `json:"instId"`
+	}
+
+	var resp BizWarmTipsV5
+
+	contractType = ok.adaptContractType(currencyPair)
+
+	getOrderParam.OrderId = cid
+	getOrderParam.InstrumentId = contractType
+
+	//reqBody, _, _ := BuildRequestBody(getOrderParam)
+
+	err := ok.DoRequest("GET", fmt.Sprintf(GET_ORDER_BY_CID, cid, contractType), "", &resp)
+	if err != nil {
+		loging.Info("GetFutureOrder", "err", err)
+		return nil, err
+	}
+
+	if resp.Message != "" {
+		loging.Info("GetFutureOrder", "resp.Message ", resp.Message)
+		return nil, errors.New(fmt.Sprintf("{\"ErrCode\":%d,\"ErrMessage\":\"%s\"}", resp.Code, resp.Message))
+	}
+
+	if len(resp.OrderInfo) == 0 {
+		return nil, fmt.Errorf("no order???")
+	}
+	order := resp.OrderInfo[0]
+	OType := order.Side + order.PositionSide
+	//mapping := map[string]string{
+	//	"buylong":   "openlong",
+	//	"sellshort": "openshort",
+	//	"selllong":  "closelong",
+	//	"buyshort":  "closeshort",
+	//}
+	mapping := map[string]int{
+		"buylong":   1,
+		"sellshort": 2,
+		"selllong":  3,
+		"buyshort":  4,
+	}
+	iTs, err := strconv.ParseInt(order.Timestamp, 10, 64)
+	orderPrice, _ := strconv.ParseFloat(order.Price, 64)
+	orderSize, _ := strconv.ParseFloat(order.Size, 64)
+	orderPriceAvg, _ := strconv.ParseFloat(order.PriceAvg, 64)
+	orderFilledQty, _ := strconv.ParseFloat(order.FilledQty, 64)
+	orderFee, _ := strconv.ParseFloat(order.Fee, 64)
+
+	loging.Info("GetFutureOrder", "status", order.Status, "Status", ok.adaptOrderStateV5(order.Status))
+	return &FutureOrder{
+		ClientOid:    order.ClientOid,
+		Currency:     currencyPair,
+		ContractName: contractType,
+		OrderID2:     order.OrderId,
+		Amount:       orderSize,
+		Price:        orderPrice,
+		DealAmount:   orderFilledQty,
+		AvgPrice:     orderPriceAvg,
+		OType:        mapping[OType],
+		Fee:          orderFee,
+		Status:       ok.adaptOrderStateV5(order.Status),
+		OrderTime:    iTs,
+	}, nil
 }
 
 func (ok *OKExSwap) GetFutureOrder(orderId string, currencyPair CurrencyPair, contractType string) (*FutureOrder, error) {
