@@ -295,14 +295,14 @@ type PlaceOrdersInfo struct {
 	OrderData    []*BasePlaceOrderInfo `json:"order_data"`
 }
 
-func (ok *OKExSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType, price, amount, openType string, matchPrice int, leverRate float64) (string, error) {
-	fOrder, err := ok.PlaceFutureOrder2(currencyPair, contractType, price, amount, openType, matchPrice)
+func (ok *OKExSwap) PlaceFutureOrder(cid string, currencyPair CurrencyPair, contractType, price, amount, openType string, matchPrice int, leverRate float64) (string, error) {
+	fOrder, err := ok.PlaceFutureOrder2(cid, currencyPair, contractType, price, amount, openType, matchPrice)
 	return fOrder.OrderID2, err
 }
 func NowAsUnixMilli() int64 {
 	return time.Now().UnixNano() / 1e6
 }
-func (ok *OKExSwap) PlaceFutureOrder2(currencyPair CurrencyPair, contractType, price, amount, openType string, matchPrice int, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
+func (ok *OKExSwap) PlaceFutureOrder2(cid string, currencyPair CurrencyPair, contractType, price, amount, openType string, matchPrice int, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
 
 	mapping := map[string][]string{
 		"openlong": []string{
@@ -319,7 +319,7 @@ func (ok *OKExSwap) PlaceFutureOrder2(currencyPair CurrencyPair, contractType, p
 		},
 	}
 
-	cid := GenerateOrderClientId(32)
+	//cid := //GenerateOrderClientId(32)
 	marketOrder := "limit"
 	if matchPrice == 1 {
 		marketOrder = "market"
@@ -381,12 +381,12 @@ func (ok *OKExSwap) PlaceFutureOrder2(currencyPair CurrencyPair, contractType, p
 	return fOrder, nil
 }
 
-func (ok *OKExSwap) LimitFuturesOrder(currencyPair CurrencyPair, contractType, price, amount, openType string, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
-	return ok.PlaceFutureOrder2(currencyPair, contractType, price, amount, openType, 0, opt...)
+func (ok *OKExSwap) LimitFuturesOrder(cid string, currencyPair CurrencyPair, contractType, price, amount, openType string, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
+	return ok.PlaceFutureOrder2(cid, currencyPair, contractType, price, amount, openType, 0, opt...)
 }
 
-func (ok *OKExSwap) MarketFuturesOrder(currencyPair CurrencyPair, contractType, amount, openType string) (*FutureOrder, error) {
-	return ok.PlaceFutureOrder2(currencyPair, contractType, "0", amount, openType, 1)
+func (ok *OKExSwap) MarketFuturesOrder(cid string, currencyPair CurrencyPair, contractType, amount, openType string) (*FutureOrder, error) {
+	return ok.PlaceFutureOrder2(cid, currencyPair, contractType, "0", amount, openType, 1)
 }
 
 func (ok *OKExSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, orderId string) (bool, error) {
