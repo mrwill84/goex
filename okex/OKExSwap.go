@@ -509,6 +509,7 @@ type BaseOrderInfoV5 struct {
 	ContractVal    string `json:"contract_val"`
 	Side           string `json:"side"`
 	PositionSide   string `json:"posSide"`
+	Pnl            string `json:"pnl"`
 }
 
 type BizWarmTipsV5 struct {
@@ -566,7 +567,7 @@ func (ok *OKExSwap) GetFutureOrderByCid(cid string, currencyPair CurrencyPair, c
 	orderPriceAvg, _ := strconv.ParseFloat(order.PriceAvg, 64)
 	orderFilledQty, _ := strconv.ParseFloat(order.FilledQty, 64)
 	orderFee, _ := strconv.ParseFloat(order.Fee, 64)
-
+	orderProfit, _ := strconv.ParseFloat(order.Pnl, 64)
 	loging.Info("GetFutureOrder", "status", order.Status, "Status", ok.adaptOrderStateV5(order.Status))
 	return &FutureOrder{
 		ClientOid:    order.ClientOid,
@@ -579,6 +580,7 @@ func (ok *OKExSwap) GetFutureOrderByCid(cid string, currencyPair CurrencyPair, c
 		AvgPrice:     orderPriceAvg,
 		OType:        mapping[OType],
 		Fee:          orderFee,
+		Profit:       orderProfit,
 		Status:       ok.adaptOrderStateV5(order.Status),
 		OrderTime:    iTs,
 	}, nil
@@ -634,7 +636,7 @@ func (ok *OKExSwap) GetFutureOrder(orderId string, currencyPair CurrencyPair, co
 	orderPriceAvg, _ := strconv.ParseFloat(order.PriceAvg, 64)
 	orderFilledQty, _ := strconv.ParseFloat(order.FilledQty, 64)
 	orderFee, _ := strconv.ParseFloat(order.Fee, 64)
-
+	orderProfit, _ := strconv.ParseFloat(order.Pnl, 64)
 	loging.Info("GetFutureOrder", "status", order.Status, "Status", ok.adaptOrderStateV5(order.Status))
 	return &FutureOrder{
 		ClientOid:    order.ClientOid,
@@ -647,6 +649,7 @@ func (ok *OKExSwap) GetFutureOrder(orderId string, currencyPair CurrencyPair, co
 		AvgPrice:     orderPriceAvg,
 		OType:        mapping[OType],
 		Fee:          orderFee,
+		Profit:       orderProfit,
 		Status:       ok.adaptOrderStateV5(order.Status),
 		OrderTime:    iTs,
 	}, nil
