@@ -404,10 +404,12 @@ func (ok *OKExSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, o
 
 	cancelParam.InstrumentId = ok.adaptContractType(currencyPair)
 	cancelParam.OrderId = orderId
-	fmt.Println("cancelParam.InstrumentId", cancelParam.InstrumentId, cancelParam.OrderId)
+
+	//fmt.Println("cancelParam.InstrumentId", cancelParam.InstrumentId, cancelParam.OrderId)
 	req, _, _ := ok.OKEx.BuildRequestBody(cancelParam)
 
 	err := ok.DoRequest("POST", CANCEL_ORDER, req, &resp)
+	loging.Info("GetFutureOrder", "resp.Message ", resp.ErrorMessage)
 	if err != nil {
 		return false, err
 	}
