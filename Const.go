@@ -34,7 +34,7 @@ func (ts TradeStatus) String() string {
 	return tradeStatusSymbol[ts]
 }
 
-var tradeStatusSymbol = [...]string{"UNFINISH", "PART_FINISH", "FINISH", "CANCEL", "REJECT", "CANCEL_ING", "FAIL"}
+var tradeStatusSymbol = [...]string{"UNFINISH", "PART_FINISH", "FINISH", "CANCEL", "REJECT", "CANCEL_ING", "FAIL", "SYSTEM_REQUEST_FAIL"}
 
 const (
 	ORDER_UNFINISH TradeStatus = iota
@@ -44,6 +44,7 @@ const (
 	ORDER_REJECT
 	ORDER_CANCEL_ING
 	ORDER_FAIL
+	SYSTEM_REQUEST_FAIL
 )
 
 const (

@@ -390,16 +390,20 @@ func (ok *OKExSwap) MarketFuturesOrder(cid string, currencyPair CurrencyPair, co
 	return ok.PlaceFutureOrder2(cid, currencyPair, contractType, "0", amount, openType, 1)
 }
 
-func (ok *OKExSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, orderId string) (bool, error) {
+func (ok *OKExSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, orderId string) (TradeStatus, error) {
 	var cancelParam struct {
 		OrderId      string `json:"ordId"`
 		InstrumentId string `json:"instId"`
 	}
 
 	var resp struct {
-		BaseResponseV5
-		OrderID   string `json:"ordId"`
-		ClientOid string `json:"clOrdId"`
+		Code string `json:"code"`
+		Msg  string `json:"msg"`
+		Data []struct {
+			BaseResponseV5
+			OrderID   string `json:"ordId"`
+			ClientOid string `json:"clOrdId"`
+		} `json:"data"`
 	}
 
 	cancelParam.InstrumentId = ok.adaptContractType(currencyPair)
@@ -409,12 +413,21 @@ func (ok *OKExSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, o
 	req, _, _ := ok.OKEx.BuildRequestBody(cancelParam)
 
 	err := ok.DoRequest("POST", CANCEL_ORDER, req, &resp)
-	loging.Info("GetFutureOrder", "resp.Message ", resp.ErrorMessage)
+	//loging.Info("GetFutureOrder", "resp.Message ", resp.ErrorMessage)
 	if err != nil {
-		return false, err
+		return SYSTEM_REQUEST_FAIL, err
 	}
 
-	return resp.ErrorCode == "0", nil
+	if resp.Code == "0" {
+		return ORDER_CANCEL, nil
+	} else if resp.Code == "0" && len(resp.Data) > 0 {
+		if resp.Data[0].BaseResponseV5.ErrorCode == "51401" {
+			return ORDER_CANCEL, nil
+		} else if resp.Data[0].BaseResponseV5.ErrorCode == "51402" {
+			return ORDER_FINISH, nil
+		}
+	}
+	return ORDER_CANCEL, nil
 }
 
 func (ok *OKExSwap) GetFutureOrderHistory(pair CurrencyPair, orderAfter string) ([]FutureOrder, error) {
