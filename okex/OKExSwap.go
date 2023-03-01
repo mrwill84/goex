@@ -520,7 +520,7 @@ type BaseOrderInfoV5 struct {
 	PriceAvg       string `json:"avgPx"`
 	Size           string `json:"sz"`
 	Fee            string `json:"fee"`
-	FilledQty      string `json:"fillSz"`
+	FilledQty      string `json:"accFillSz"`
 	ContractVal    string `json:"contract_val"`
 	Side           string `json:"side"`
 	PositionSide   string `json:"posSide"`
@@ -550,12 +550,12 @@ func (ok *OKExSwap) GetFutureOrderByCid(cid string, currencyPair CurrencyPair, c
 
 	err := ok.DoRequest("GET", fmt.Sprintf(GET_ORDER_BY_CID, cid, contractType), "", &resp)
 	if err != nil {
-		loging.Info("GetFutureOrder", "err", err)
+		loging.Info("GetFutureOrderByCid", "err", err)
 		return nil, err
 	}
 
 	if resp.Message != "" {
-		loging.Info("GetFutureOrder", "resp.Message ", resp.Message)
+		loging.Info("GetFutureOrderByCid", "cid", cid, "resp.Message ", resp.Message)
 		return nil, errors.New(fmt.Sprintf("{\"ErrCode\":%d,\"ErrMessage\":\"%s\"}", resp.Code, resp.Message))
 	}
 
@@ -606,7 +606,7 @@ func (ok *OKExSwap) GetFutureOrder(orderId string, currencyPair CurrencyPair, co
 		OrderId      string `json:"ordId"`
 		InstrumentId string `json:"instId"`
 	}
-	fmt.Println(orderId)
+	//fmt.Println(orderId)
 
 	var resp BizWarmTipsV5
 
@@ -624,7 +624,7 @@ func (ok *OKExSwap) GetFutureOrder(orderId string, currencyPair CurrencyPair, co
 	}
 
 	if resp.Message != "" {
-		loging.Info("GetFutureOrder", "resp.Message ", resp.Message)
+		loging.Info("GetFutureOrder", "orderId", orderId, "resp.Message ", resp.Message)
 		return nil, errors.New(fmt.Sprintf("{\"ErrCode\":%d,\"ErrMessage\":\"%s\"}", resp.Code, resp.Message))
 	}
 

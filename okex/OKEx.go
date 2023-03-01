@@ -107,6 +107,7 @@ func (ok *OKEx) adaptOrderStateV5(state string) TradeStatus {
 	case "partially_filled":
 		return ORDER_PART_FINISH
 	case "filled":
+
 		return ORDER_FINISH
 	}
 	return ORDER_UNFINISH
