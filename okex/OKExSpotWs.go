@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	. "github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type OKExV3SpotWs struct {
@@ -102,7 +103,7 @@ func (okV3Ws *OKExV3SpotWs) getCurrencyPair(instrumentId string) CurrencyPair {
 	return NewCurrencyPair3(instrumentId, "-")
 }
 
-func (okV3Ws *OKExV3SpotWs) handle(ch string, data json.RawMessage) error {
+func (okV3Ws *OKExV3SpotWs) handle(ch string, instId string, data json.RawMessage) error {
 	var (
 		err           error
 		tickers       []spotTickerResponse
@@ -153,7 +154,7 @@ func (okV3Ws *OKExV3SpotWs) handle(ch string, data json.RawMessage) error {
 			return nil
 		}
 
-		dep.Pair = okV3Ws.getCurrencyPair(depthResp[0].InstrumentId)
+		//dep.Pair = okV3Ws.getCurrencyPair(depthResp[0].)
 		dep.UTime, _ = time.Parse(time.RFC3339, depthResp[0].Timestamp)
 		for _, itm := range depthResp[0].Asks {
 			dep.AskList = append(dep.AskList, DepthRecord{
