@@ -162,7 +162,7 @@ func (okV3Ws *OKExV3FuturesWs) getContractAliasAndCurrencyPairFromInstrumentId(i
 	}
 }
 
-func (okV3Ws *OKExV3FuturesWs) handle(channel string, data json.RawMessage) error {
+func (okV3Ws *OKExV3FuturesWs) handle(channel string, instId string, data json.RawMessage) error {
 	var (
 		err           error
 		ch            string
@@ -253,10 +253,10 @@ func (okV3Ws *OKExV3FuturesWs) handle(channel string, data json.RawMessage) erro
 		if len(depthResp) == 0 {
 			return nil
 		}
-		alias, pair := okV3Ws.getContractAliasAndCurrencyPairFromInstrumentId(depthResp[0].InstrumentId)
-		dep.Pair = pair
-		dep.ContractType = alias
-		dep.ContractId = depthResp[0].InstrumentId
+		//alias, pair := okV3Ws.getContractAliasAndCurrencyPairFromInstrumentId(depthResp[0].InstrumentId)
+		//dep.Pair = pair
+		//dep.ContractType = alias
+		//dep.ContractId = depthResp[0].InstrumentId
 		dep.UTime, _ = time.Parse(time.RFC3339, depthResp[0].Timestamp)
 		for _, itm := range depthResp[0].Asks {
 			dep.AskList = append(dep.AskList, DepthRecord{
