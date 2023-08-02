@@ -93,7 +93,7 @@ func (okV3Ws *OKExV3FuturesWs) SubscribeDepth(currencyPair CurrencyPair, contrac
 
 	return okV3Ws.v3Ws.Subscribe(map[string]interface{}{
 		"op":   "subscribe",
-		"args": []string{fmt.Sprintf(chName, "depth5")}})
+		"args": []string{fmt.Sprintf(chName, "books")}})
 }
 
 func (okV3Ws *OKExV3FuturesWs) SubscribeTicker(currencyPair CurrencyPair, contractType string) error {

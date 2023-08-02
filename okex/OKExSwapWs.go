@@ -62,7 +62,6 @@ func (okV3Ws *OKExV3SwapWs) getChannelName(currencyPair CurrencyPair, contractTy
 	)
 
 	if contractType == SWAP_CONTRACT {
-
 		contractId = fmt.Sprintf("%s-SWAP", currencyPair.ToSymbol("-"))
 	} else {
 
@@ -77,15 +76,21 @@ func (okV3Ws *OKExV3SwapWs) SubscribeDepth(currencyPair CurrencyPair, contractTy
 	if okV3Ws.depthCallback == nil {
 		return errors.New("please set depth callback func")
 	}
-
 	chName := okV3Ws.getChannelName(currencyPair, contractType)
 	if chName == "" {
 		return errors.New("subscribe error, get channel name fail")
 	}
+	ps := []map[string]string{}
+
+	ps = append(ps, map[string]string{
+		"channel": "books",
+		"instId":  chName,
+	})
 
 	return okV3Ws.v3Ws.Subscribe(map[string]interface{}{
 		"op":   "subscribe",
-		"args": []string{fmt.Sprintf(chName, "depth5")}})
+		"args": ps,
+	})
 }
 
 func (okV3Ws *OKExV3SwapWs) SubscribeTicker(currencyPair CurrencyPair, contractType string) error {
@@ -246,7 +251,7 @@ func (okV3Ws *OKExV3SwapWs) handle(channel string, data json.RawMessage) error {
 			}, 1)
 		}
 		return nil
-	case "depth5":
+	case "books":
 		err := json.Unmarshal(data, &depthResp)
 		if err != nil {
 			logger.Error(err)
