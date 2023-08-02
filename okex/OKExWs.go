@@ -18,8 +18,9 @@ type wsResp struct {
 		Channel string `json:"channel"`
 		InstId  string `json:"instId"`
 	} `json:"arg"`
-	Event string `json:"event"`
-	Data  json.RawMessage
+	Event  string `json:"event"`
+	Action string `json:"action"`
+	Data   json.RawMessage
 }
 
 type OKExV3Ws struct {
@@ -27,7 +28,7 @@ type OKExV3Ws struct {
 	*WsBuilder
 	once       *sync.Once
 	WsConn     *WsConn
-	respHandle func(channel, instId string, data json.RawMessage) error
+	respHandle func(*wsResp) error
 }
 
 type OkexLoginArg struct {
@@ -42,7 +43,7 @@ type OKExLogin struct {
 	Args []OkexLoginArg `json:"args"`
 }
 
-func NewOKExV3Ws(base *OKEx, handle func(channel string, instId string, data json.RawMessage) error) *OKExV3Ws {
+func NewOKExV3Ws(base *OKEx, handle func(*wsResp) error) *OKExV3Ws {
 	okV3Ws := &OKExV3Ws{
 		once:       new(sync.Once),
 		base:       base,
@@ -142,7 +143,7 @@ func (okV3Ws *OKExV3Ws) handle(msg []byte) error {
 		return fmt.Errorf("unknown websocket message: %v", wsResp)
 	}
 
-	err = okV3Ws.respHandle(wsResp.Arg.Channel, wsResp.Arg.InstId, wsResp.Data)
+	err = okV3Ws.respHandle(&wsResp)
 	if err != nil {
 		logger.Error("handle ws data error:", err)
 	}

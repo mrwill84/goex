@@ -166,9 +166,9 @@ func (okV3Ws *OKExV3SwapWs) getContractAliasAndCurrencyPairFromInstrumentId(inst
 	}
 }
 
-func (okV3Ws *OKExV3SwapWs) handle(channel string, instId string, data json.RawMessage) error {
+func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 
-	fmt.Println("channel string, instId", channel, instId)
+	//fmt.Println("channel string, instId", channel, instId)
 	var (
 		err           error
 		ch            string
@@ -188,7 +188,8 @@ func (okV3Ws *OKExV3SwapWs) handle(channel string, instId string, data json.RawM
 			InstrumentId string   `json:"instrument_id"`
 		}
 	)
-
+	channel := resp.Arg.Channel
+	data := resp.Data
 	if strings.Contains(channel, "futures/candle") ||
 		strings.Contains(channel, "swap/candle") {
 		ch = "candle"
@@ -263,11 +264,13 @@ func (okV3Ws *OKExV3SwapWs) handle(channel string, instId string, data json.RawM
 		//alias, pair := okV3Ws.getContractAliasAndCurrencyPairFromInstrumentId(depthResp[0].InstrumentId)
 		//dep.Pair = pair
 		//channel string, instId
-
-		dep.ContractType = instId //alias
+		instId := resp.Arg.InstId
+		dep.ContractType = "SWAP" //alias
 		dep.ContractId = instId   //depthResp[0].InstrumentId
-		dep.UTime, _ = time.Parse(time.RFC3339, depthResp[0].Timestamp)
-		dep.Action = depthResp[0].Action
+		dep.Action = resp.Action
+		ts := ToInt64(depthResp[0].Timestamp)
+		dep.UTime = time.Unix(ts/1000, ts%1000) //time.Parse(time.RFC3339, depthResp[0].Timestamp)
+
 		for _, itm := range depthResp[0].Asks {
 			dep.AskList = append(dep.AskList, DepthRecord{
 				Price:  ToFloat64(itm[0]),
