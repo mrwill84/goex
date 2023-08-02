@@ -204,10 +204,13 @@ func (ok *OKExFuture) GetFutureAllTicker() (*[]FutureTicker, error) {
 }
 
 type depthResponse struct {
-	Bids         [][4]interface{} `json:"bids"`
-	Asks         [][4]interface{} `json:"asks"`
-	InstrumentId string           `json:"instrument_id"`
-	Timestamp    string           `json:"timestamp"`
+	Bids      [][4]string `json:"bids"`
+	Asks      [][4]string `json:"asks"`
+	Action    string      `json:"action"`
+	Timestamp string      `json:"ts"`
+	SeqId     int64       `json:"seqId"`
+	PrevSeqId int64       `json:"prevSeqId"`
+	Checksum  int64       `json:"checksum"`
 }
 
 func (ok *OKExFuture) GetFutureDepth(currencyPair CurrencyPair, contractType string, size int) (*Depth, error) {

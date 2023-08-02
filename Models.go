@@ -87,6 +87,7 @@ type FutureTicker struct {
 type DepthRecord struct {
 	Price  float64
 	Amount float64
+	Slots  int64
 }
 
 type DepthRecords []DepthRecord
@@ -108,6 +109,7 @@ type Depth struct {
 	ContractId   string `json:"contract_id,omitempty"`   // for futures
 	Pair         CurrencyPair
 	UTime        time.Time
+	Action       string
 	AskList      DepthRecords // Descending order
 	BidList      DepthRecords // Descending order
 }

@@ -166,9 +166,9 @@ func (okV3Ws *OKExV3SwapWs) getContractAliasAndCurrencyPairFromInstrumentId(inst
 	}
 }
 
-func (okV3Ws *OKExV3SwapWs) handle(channel string, data json.RawMessage) error {
+func (okV3Ws *OKExV3SwapWs) handle(channel string, instId string, data json.RawMessage) error {
 
-	//fmt.Println(channel, data)
+	fmt.Println("channel string, instId", channel, instId)
 	var (
 		err           error
 		ch            string
@@ -260,20 +260,27 @@ func (okV3Ws *OKExV3SwapWs) handle(channel string, data json.RawMessage) error {
 		if len(depthResp) == 0 {
 			return nil
 		}
-		alias, pair := okV3Ws.getContractAliasAndCurrencyPairFromInstrumentId(depthResp[0].InstrumentId)
-		dep.Pair = pair
-		dep.ContractType = alias
-		dep.ContractId = depthResp[0].InstrumentId
+		//alias, pair := okV3Ws.getContractAliasAndCurrencyPairFromInstrumentId(depthResp[0].InstrumentId)
+		//dep.Pair = pair
+		//channel string, instId
+
+		dep.ContractType = instId //alias
+		dep.ContractId = instId   //depthResp[0].InstrumentId
 		dep.UTime, _ = time.Parse(time.RFC3339, depthResp[0].Timestamp)
+		dep.Action = depthResp[0].Action
 		for _, itm := range depthResp[0].Asks {
 			dep.AskList = append(dep.AskList, DepthRecord{
 				Price:  ToFloat64(itm[0]),
-				Amount: ToFloat64(itm[1])})
+				Amount: ToFloat64(itm[1]),
+				Slots:  ToInt64(itm[3]),
+			})
 		}
 		for _, itm := range depthResp[0].Bids {
 			dep.BidList = append(dep.BidList, DepthRecord{
 				Price:  ToFloat64(itm[0]),
-				Amount: ToFloat64(itm[1])})
+				Amount: ToFloat64(itm[1]),
+				Slots:  ToInt64(itm[3]),
+			})
 		}
 		sort.Sort(sort.Reverse(dep.AskList))
 		//call back func
