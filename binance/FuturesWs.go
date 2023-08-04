@@ -3,8 +3,6 @@ package binance
 import (
 	"encoding/json"
 	"errors"
-	"github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"net/http"
 	"net/url"
 	"os"
@@ -12,6 +10,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type FuturesWs struct {
@@ -32,7 +33,6 @@ func NewFuturesWs() *FuturesWs {
 	futuresWs := new(FuturesWs)
 
 	futuresWs.wsBuilder = goex.NewWsBuilder().
-		ProxyUrl(os.Getenv("HTTPS_PROXY")).
 		ProtoHandleFunc(futuresWs.handle).AutoReconnect()
 
 	httpCli := &http.Client{
@@ -84,12 +84,14 @@ func (s *FuturesWs) TradeCallback(f func(trade *goex.Trade, contract string)) {
 func (s *FuturesWs) SubscribeDepth(pair goex.CurrencyPair, contractType string) error {
 	switch contractType {
 	case goex.SWAP_USDT_CONTRACT:
+		s.connectUsdtFutures()
 		return s.f.Subscribe(req{
 			Method: "SUBSCRIBE",
 			Params: []string{pair.AdaptUsdToUsdt().ToLower().ToSymbol("") + "@depth10@100ms"},
 			Id:     1,
 		})
 	default:
+		s.connectFutures()
 		sym, _ := s.base.adaptToSymbol(pair.AdaptUsdtToUsd(), contractType)
 		return s.d.Subscribe(req{
 			Method: "SUBSCRIBE",

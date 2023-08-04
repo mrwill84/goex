@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gorilla/websocket"
-	. "github.com/mrwill84/goex/internal/logger"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
+	. "github.com/mrwill84/goex/internal/logger"
 )
 
 type WsConfig struct {
@@ -275,6 +276,7 @@ func (ws *WsConn) Subscribe(subEvent interface{}) error {
 		return err
 	}
 	Log.Debug(string(data))
+	fmt.Println("ws", ws)
 	ws.writeBufferChan <- data
 	ws.subs = append(ws.subs, data)
 	return nil
