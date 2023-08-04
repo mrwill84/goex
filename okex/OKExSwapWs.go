@@ -323,7 +323,7 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 			r := i.Val.(*DepthRecord)
 			dep.AskList = append(dep.AskList, *r)
 		}
-		for i := range snapshot.Bids.Iter() {
+		for i := range snapshot.Bids.RIter() {
 			r := i.Val.(*DepthRecord)
 			dep.BidList = append(dep.BidList, *r)
 		}

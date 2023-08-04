@@ -25,7 +25,9 @@ func TestBST(t *testing.T) {
 	}
 	bstree.Upsert("1", &pb)
 	bstree.Upsert("2", &pb2)
-	for i := range bstree.Iter() {
+	bstree.Upsert("3", &pb2)
+	bstree.Upsert("4", &pb2)
+	for i := range bstree.RIter() {
 		fmt.Println(i)
 	}
 	fmt.Println("/////")

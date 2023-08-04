@@ -147,6 +147,18 @@ func (n *node) iter(ch chan<- Item) {
 	}
 	n.right.iter(ch)
 }
+func (n *node) riter(ch chan<- Item) {
+	if n == nil {
+		return
+	}
+	n.right.riter(ch)
+	ch <- Item{
+		Key: n.key,
+		Val: n.val,
+	}
+	n.left.riter(ch)
+
+}
 
 // Iter provides an iterator to walk through the binary search tree
 func (b *BSTree) Iter() <-chan Item {
@@ -154,6 +166,17 @@ func (b *BSTree) Iter() <-chan Item {
 	b.lock.RLock()
 	go func() {
 		b.root.iter(ch)
+		b.lock.RUnlock()
+		close(ch)
+	}()
+	return ch
+}
+
+func (b *BSTree) RIter() <-chan Item {
+	ch := make(chan Item)
+	b.lock.RLock()
+	go func() {
+		b.root.riter(ch)
 		b.lock.RUnlock()
 		close(ch)
 	}()
