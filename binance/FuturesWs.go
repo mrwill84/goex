@@ -146,6 +146,7 @@ func (s *FuturesWs) handle(data []byte) error {
 		}
 
 		dep.UTime = time.Unix(0, goex.ToInt64(m["T"])*int64(time.Millisecond))
+		dep.Exchange = "BINANCE"
 		s.depthCallFn(dep)
 
 		return nil
@@ -203,6 +204,6 @@ func (s *FuturesWs) tickerHandle(m map[string]interface{}) *goex.FutureTicker {
 	ticker.Low = goex.ToFloat64(m["l"])
 	ticker.Last = goex.ToFloat64(m["c"])
 	ticker.Vol = goex.ToFloat64(m["v"])
-
+	ticker.Exchange = "BINANCE"
 	return &ticker
 }

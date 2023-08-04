@@ -78,6 +78,7 @@ type FutureTicker struct {
 	*Ticker
 	ContractType string  `json:"omitempty"`
 	ContractId   string  `json:"contractId"`
+	Exchange     string  `json:"exchange,omitempty"`
 	LimitHigh    float64 `json:"limitHigh,string"`
 	LimitLow     float64 `json:"limitLow,string"`
 	HoldAmount   float64 `json:"hold_amount,string"`
@@ -107,6 +108,7 @@ func (dr DepthRecords) Less(i, j int) bool {
 type Depth struct {
 	ContractType string `json:"contract_type,omitempty"` //for futures
 	ContractId   string `json:"contract_id,omitempty"`   // for futures
+	Exchange     string
 	Pair         CurrencyPair
 	UTime        time.Time
 	Action       string

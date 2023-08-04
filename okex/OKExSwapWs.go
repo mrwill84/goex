@@ -259,6 +259,7 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 				},
 				ContractId:   t.InstrumentId,
 				ContractType: alias,
+				Exchange:     "OKEX",
 			})
 
 		}
@@ -303,6 +304,7 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 		dep.ContractType = "SWAP" //alias
 		dep.ContractId = instId   //depthResp[0].InstrumentId
 		dep.Action = resp.Action
+		dep.Exchange = "OKEX"
 		ts := ToInt64(depthResp[0].Timestamp)
 		dep.UTime = time.Unix(ts/1000, ts%1000) //time.Parse(time.RFC3339, depthResp[0].Timestamp)
 
@@ -327,6 +329,7 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 			r := i.Val.(*DepthRecord)
 			dep.BidList = append(dep.BidList, *r)
 		}
+
 		//call back func
 		okV3Ws.depthCallback(&dep)
 		return nil
