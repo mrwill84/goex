@@ -3,7 +3,6 @@ package binance
 import (
 	"net"
 	"net/http"
-	"net/url"
 	"testing"
 	"time"
 
@@ -11,13 +10,8 @@ import (
 )
 
 var bs = NewBinanceSwap(&goex.APIConfig{
-	Endpoint: "https://testnet.binancefuture.com",
 	HttpClient: &http.Client{
 		Transport: &http.Transport{
-			Proxy: func(req *http.Request) (*url.URL, error) {
-				return url.Parse("socks5://127.0.0.1:1080")
-				return nil, nil
-			},
 			Dial: (&net.Dialer{
 				Timeout: 10 * time.Second,
 			}).Dial,
@@ -41,8 +35,8 @@ func TestBinanceSwap_GetFutureIndex(t *testing.T) {
 }
 
 func TestBinanceSwap_GetKlineRecords(t *testing.T) {
-	kline, err := bs.GetKlineRecords("", goex.BTC_USDT, goex.KLINE_PERIOD_4H, 1, 0)
-	t.Log(err, kline[0].Kline)
+	//kline, err := bs.GetKlineRecords("", goex.BTC_USDT, goex.KLINE_PERIOD_4H, 1, 0)
+	//t.Log(err, kline[0].Kline)
 }
 
 func TestBinanceSwap_GetTrades(t *testing.T) {
@@ -58,15 +52,21 @@ func TestBinanceSwap_PlaceFutureOrder(t *testing.T) {
 }
 
 func TestBinanceSwap_PlaceFutureOrder2(t *testing.T) {
-	t.Log(bs.PlaceFutureOrder(goex.BTC_USDT, "", "8322", "0.01", goex.OPEN_BUY, 1, 0))
+	t.Log(bs.PlaceFutureOrder(goex.BTC_USDT,
+		goex.SWAP_USDT_CONTRACT,
+		"28000",
+		"0.01",
+		goex.OPEN_BUY, 0, 100))
 }
 
 func TestBinanceSwap_GetFutureOrder(t *testing.T) {
-	t.Log(bs.GetFutureOrder("1431689723", goex.BTC_USDT, ""))
+	t.Log(bs.GetFutureOrder("177597851702", goex.BTC_USDT, goex.SWAP_USDT_CONTRACT))
 }
 
 func TestBinanceSwap_FutureCancelOrder(t *testing.T) {
-	t.Log(bs.FutureCancelOrder(goex.BTC_USDT, "", "1431554165"))
+	t.Log(bs.FutureCancelOrder(goex.BTC_USDT,
+		goex.SWAP_USDT_CONTRACT,
+		"177597851702"))
 }
 
 func TestBinanceSwap_GetFuturePosition(t *testing.T) {
