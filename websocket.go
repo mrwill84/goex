@@ -276,7 +276,7 @@ func (ws *WsConn) Subscribe(subEvent interface{}) error {
 		return err
 	}
 	Log.Debug(string(data))
-	fmt.Println("ws", ws)
+	//fmt.Println("ws", ws)
 	ws.writeBufferChan <- data
 	ws.subs = append(ws.subs, data)
 	return nil

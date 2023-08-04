@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/mrwill84/goex"
 	"net/url"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	. "github.com/mrwill84/goex"
 )
 
 const (
@@ -42,7 +43,7 @@ func NewBinanceSwap(config *APIConfig) *BinanceSwap {
 			Lever:        config.Lever,
 		}),
 	}
-	bs.setTimeOffset()
+	//bs.setTimeOffset()
 	return bs
 }
 
