@@ -198,13 +198,13 @@ func (s *FuturesWs) tickerHandle(m map[string]interface{}) *goex.FutureTicker {
 		ticker.Pair = adaptSymbolToCurrencyPair(m["s"].(string)) //usdt swap
 	}
 
-	ticker.ContractType = m["s"].(string)
+	ticker.ContractType = "SWAP"
 	ticker.Date = goex.ToUint64(m["E"])
 	ticker.High = goex.ToFloat64(m["h"])
 	ticker.Low = goex.ToFloat64(m["l"])
 	ticker.Last = goex.ToFloat64(m["c"])
 	ticker.Vol = goex.ToFloat64(m["v"])
 	ticker.Exchange = "BINANCE"
-	ticker.ContractId = symbol
+	ticker.ContractId = m["s"].(string)
 	return &ticker
 }

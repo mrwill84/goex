@@ -76,7 +76,7 @@ type Ticker struct {
 
 type FutureTicker struct {
 	*Ticker
-	ContractType string  `json:"omitempty"`
+	ContractType string  `json:"contractType,omitempty"`
 	ContractId   string  `json:"contractId"`
 	Exchange     string  `json:"exchange,omitempty"`
 	LimitHigh    float64 `json:"limitHigh,string"`
