@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"funcs/libs/loging"
 	"strings"
 	"sync"
 	"time"
@@ -98,7 +97,7 @@ func (ok *OKEx) adaptOrderState(state int) TradeStatus {
 }
 
 func (ok *OKEx) adaptOrderStateV5(state string) TradeStatus {
-	loging.Info("adaptOrderStateV5", "state", state)
+	//loging.Info("adaptOrderStateV5", "state", state)
 	switch state {
 	case "canceled":
 		return ORDER_CANCEL

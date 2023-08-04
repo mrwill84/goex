@@ -4,13 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/mrwill84/goex/okex/bst"
+
 	. "github.com/mrwill84/goex"
 	"github.com/mrwill84/goex/internal/logger"
+	cmap "github.com/orcaman/concurrent-map"
 )
 
 type OKExV3SwapWs struct {
@@ -21,6 +23,13 @@ type OKExV3SwapWs struct {
 	tradeCallback  func(*Trade, string)
 	klineCallback  func(*FutureKline, int)
 }
+
+type OkexSnapshot struct {
+	Asks bst.BSTree
+	Bids bst.BSTree
+}
+
+var container cmap.ConcurrentMap = cmap.New()
 
 func NewOKExV3SwapWs(base *OKEx) *OKExV3SwapWs {
 	okV3Ws := &OKExV3SwapWs{
@@ -166,6 +175,32 @@ func (okV3Ws *OKExV3SwapWs) getContractAliasAndCurrencyPairFromInstrumentId(inst
 	}
 }
 
+func AcceptSnap(snapshot *OkexSnapshot, depth *depthResponse) {
+
+	for _, itm := range depth.Asks {
+		if itm[3] == "0" { //delete
+			snapshot.Asks.Delete(itm[0])
+		} else {
+			snapshot.Asks.Upsert(itm[0], &DepthRecord{
+				Price:  ToFloat64(itm[0]),
+				Amount: ToFloat64(itm[1]),
+				Slots:  ToInt64(itm[3]),
+			})
+		}
+	}
+	for _, itm := range depth.Bids {
+		if itm[3] == "0" { //delete
+			snapshot.Bids.Delete(itm[0])
+		} else {
+			snapshot.Bids.Upsert(itm[0], &DepthRecord{
+				Price:  ToFloat64(itm[0]),
+				Amount: ToFloat64(itm[1]),
+				Slots:  ToInt64(itm[3]),
+			})
+		}
+	}
+}
+
 func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 
 	//fmt.Println("channel string, instId", channel, instId)
@@ -271,21 +306,25 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 		ts := ToInt64(depthResp[0].Timestamp)
 		dep.UTime = time.Unix(ts/1000, ts%1000) //time.Parse(time.RFC3339, depthResp[0].Timestamp)
 
-		for _, itm := range depthResp[0].Asks {
-			dep.AskList = append(dep.AskList, DepthRecord{
-				Price:  ToFloat64(itm[0]),
-				Amount: ToFloat64(itm[1]),
-				Slots:  ToInt64(itm[3]),
-			})
+		i, ok := container.Get(instId)
+		var snapshot *OkexSnapshot
+		if ok {
+			if s, ok2 := i.(*OkexSnapshot); ok2 {
+				snapshot = s
+			}
+		} else {
+			snapshot = new(OkexSnapshot)
+			container.Set(instId, snapshot)
 		}
-		for _, itm := range depthResp[0].Bids {
-			dep.BidList = append(dep.BidList, DepthRecord{
-				Price:  ToFloat64(itm[0]),
-				Amount: ToFloat64(itm[1]),
-				Slots:  ToInt64(itm[3]),
-			})
+
+		AcceptSnap(snapshot, &depthResp[0])
+
+		for i := range snapshot.Asks.Iter() {
+			dep.AskList = append(dep.AskList, i)
 		}
-		sort.Sort(sort.Reverse(dep.AskList))
+		for i := range snapshot.Bids.Iter() {
+			dep.BidList = append(dep.BidList, i)
+		}
 		//call back func
 		okV3Ws.depthCallback(&dep)
 		return nil

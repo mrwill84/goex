@@ -9,6 +9,7 @@ require (
 	github.com/gorilla/websocket v1.4.1
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/nubo/jwt v0.0.0-20150918093313-da5b79c3bbaf
+	github.com/orcaman/concurrent-map v1.0.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.34.0
 )
