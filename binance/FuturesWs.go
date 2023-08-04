@@ -205,5 +205,6 @@ func (s *FuturesWs) tickerHandle(m map[string]interface{}) *goex.FutureTicker {
 	ticker.Last = goex.ToFloat64(m["c"])
 	ticker.Vol = goex.ToFloat64(m["v"])
 	ticker.Exchange = "BINANCE"
+	ticker.ContractId = symbol
 	return &ticker
 }
