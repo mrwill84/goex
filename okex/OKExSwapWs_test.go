@@ -1,12 +1,12 @@
 package okex
 
 import (
-	"github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"net/http"
-	"os"
 	"testing"
 	"time"
+
+	"github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 func init() {
@@ -14,7 +14,7 @@ func init() {
 }
 
 func TestNewOKExV3SwapWs(t *testing.T) {
-	os.Setenv("HTTPS_PROXY", "socks5://127.0.0.1:1080")
+	//os.Setenv("HTTPS_PROXY", "socks5://127.0.0.1:1080")
 	ok := NewOKEx(&goex.APIConfig{
 		HttpClient: http.DefaultClient,
 	})
