@@ -326,6 +326,8 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 			if lv != 0 {
 				r := i.Val.(*DepthRecord)
 				dep.AskList = append(dep.AskList, *r)
+			} else {
+				break
 			}
 			lv--
 		}
@@ -334,6 +336,8 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 			if lv != 0 {
 				r := i.Val.(*DepthRecord)
 				dep.BidList = append(dep.BidList, *r)
+			} else {
+				break
 			}
 			lv--
 		}
