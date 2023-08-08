@@ -321,27 +321,20 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 
 		AcceptSnap(snapshot, &depthResp[0])
 
-		lv := 10
 		for i := range snapshot.Asks.Iter() {
-			if lv != 0 {
-				r := i.Val.(*DepthRecord)
-				dep.AskList = append(dep.AskList, *r)
-			} else {
-				break
-			}
-			lv--
-		}
-		i = 10
-		for i := range snapshot.Bids.RIter() {
-			if lv != 0 {
-				r := i.Val.(*DepthRecord)
-				dep.BidList = append(dep.BidList, *r)
-			} else {
-				break
-			}
-			lv--
+			r := i.Val.(*DepthRecord)
+			dep.AskList = append(dep.AskList, *r)
+
 		}
 
+		for i := range snapshot.Bids.RIter() {
+
+			r := i.Val.(*DepthRecord)
+			dep.BidList = append(dep.BidList, *r)
+
+		}
+		dep.AskList = dep.AskList[:10]
+		dep.BidList = dep.BidList[:10]
 		//call back func
 		okV3Ws.depthCallback(&dep)
 		return nil
