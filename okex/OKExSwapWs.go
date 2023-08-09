@@ -20,7 +20,7 @@ type OKExV3SwapWs struct {
 	v3Ws           *OKExV3Ws
 	tickerCallback func(*FutureTicker)
 	depthCallback  func(*Depth)
-	tradeCallback  func(*Trade, string)
+	tradeCallback  func(*Trade)
 	klineCallback  func(*FutureKline, int)
 }
 
@@ -47,7 +47,7 @@ func (okV3Ws *OKExV3SwapWs) DepthCallback(depthCallback func(*Depth)) {
 	okV3Ws.depthCallback = depthCallback
 }
 
-func (okV3Ws *OKExV3SwapWs) TradeCallback(tradeCallback func(*Trade, string)) {
+func (okV3Ws *OKExV3SwapWs) TradeCallback(tradeCallback func(*Trade)) {
 	okV3Ws.tradeCallback = tradeCallback
 }
 
@@ -57,7 +57,7 @@ func (okV3Ws *OKExV3SwapWs) KlineCallback(klineCallback func(*FutureKline, int))
 
 func (okV3Ws *OKExV3SwapWs) SetCallbacks(tickerCallback func(*FutureTicker),
 	depthCallback func(*Depth),
-	tradeCallback func(*Trade, string),
+	tradeCallback func(*Trade),
 	klineCallback func(*FutureKline, int)) {
 	okV3Ws.tickerCallback = tickerCallback
 	okV3Ws.depthCallback = depthCallback
@@ -133,10 +133,15 @@ func (okV3Ws *OKExV3SwapWs) SubscribeTrade(currencyPair CurrencyPair, contractTy
 	if chName == "" {
 		return errors.New("subscribe error, get channel name fail")
 	}
+	ps := []map[string]string{}
+	ps = append(ps, map[string]string{
+		"channel": "trades",
+		"instId":  chName,
+	})
 
 	return okV3Ws.v3Ws.Subscribe(map[string]interface{}{
 		"op":   "subscribe",
-		"args": []string{fmt.Sprintf(chName, "trade")}})
+		"args": ps})
 }
 
 func (okV3Ws *OKExV3SwapWs) SubscribeKline(currencyPair CurrencyPair, contractType string, period int) error {
@@ -212,11 +217,11 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 		dep           Depth
 		tradeResponse []struct {
 			Side         string  `json:"side"`
-			TradeId      int64   `json:"trade_id,string"`
-			Price        float64 `json:"price,string"`
-			Qty          float64 `json:"qty,string"`
-			InstrumentId string  `json:"instrument_id"`
-			Timestamp    string  `json:"timestamp"`
+			TradeId      int64   `json:"tradeId,string"`
+			Price        float64 `json:"px,string"`
+			Qty          float64 `json:"sz,string"`
+			InstrumentId string  `json:"instId"`
+			Timestamp    string  `json:"ts"`
 		}
 		klineResponse []struct {
 			Candle       []string `json:"candle"`
@@ -338,7 +343,7 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 		//call back func
 		okV3Ws.depthCallback(&dep)
 		return nil
-	case "trade":
+	case "trades":
 		err := json.Unmarshal(data, &tradeResponse)
 		if err != nil {
 			logger.Error("unmarshal error :", err)
@@ -346,27 +351,31 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 		}
 
 		for _, resp := range tradeResponse {
-			alias, pair := okV3Ws.getContractAliasAndCurrencyPairFromInstrumentId(resp.InstrumentId)
+			_, pair := okV3Ws.getContractAliasAndCurrencyPairFromInstrumentId(resp.InstrumentId)
 
 			tradeSide := SELL
 			switch resp.Side {
 			case "buy":
 				tradeSide = BUY
 			}
-
-			t, err := time.Parse(time.RFC3339, resp.Timestamp)
+			its, err := strconv.ParseInt(resp.Timestamp, 10, 64)
+			//t, err := time.Parse(time.RFC3339, resp.Timestamp)
 			if err != nil {
 				logger.Warn("parse timestamp error:", err)
 			}
 
 			okV3Ws.tradeCallback(&Trade{
-				Tid:    resp.TradeId,
-				Type:   tradeSide,
-				Amount: resp.Qty,
-				Price:  resp.Price,
-				Date:   t.Unix(),
-				Pair:   pair,
-			}, alias)
+				ContractId:   resp.InstrumentId,
+				ContractType: "SWAP",
+				Tid:          resp.TradeId,
+				Type:         tradeSide,
+				Amount:       resp.Qty,
+				Price:        resp.Price,
+				Date:         its,
+				Pair:         pair,
+				Exchange:     "OKEX",
+				Slots:        0,
+			})
 		}
 		return nil
 	}

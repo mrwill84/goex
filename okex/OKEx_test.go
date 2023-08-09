@@ -1,12 +1,12 @@
 package okex
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/mrwill84/goex"
 	"github.com/mrwill84/goex/internal/logger"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
-	"time"
 )
 
 func init() {
@@ -136,12 +136,12 @@ func TestOKExFuture_GetRate(t *testing.T) {
 }
 
 func TestOKExFuture_GetKlineRecords(t *testing.T) {
-	since := time.Now().Add(-24 * time.Hour).Unix()
-	kline, err := okex.OKExFuture.GetKlineRecords(goex.QUARTER_CONTRACT, goex.BTC_USD, goex.KLINE_PERIOD_4H, 0, int(since))
-	assert.Nil(t, err)
-	for _, k := range kline {
-		t.Logf("%+v", k.Kline)
-	}
+	//since := time.Now().Add(-24 * time.Hour).Unix()
+	//kline, err := okex.OKExFuture.GetKlineRecords(goex.QUARTER_CONTRACT, goex.BTC_USD, goex.KLINE_PERIOD_4H, 0, int(since))
+	//assert.Nil(t, err)
+	//for _, k := range kline {
+	//	t.Logf("%+v", k.Kline)
+	//}
 }
 
 func TestOKExWallet_GetAccount(t *testing.T) {

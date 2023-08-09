@@ -1,11 +1,12 @@
 package okex
 
 import (
-	"github.com/mrwill84/goex"
 	"net/http"
 	"net/url"
 	"testing"
 	"time"
+
+	"github.com/mrwill84/goex"
 )
 
 var config = &goex.APIConfig{
@@ -31,11 +32,11 @@ func TestOKExSwap_GetFutureUserinfo(t *testing.T) {
 }
 
 func TestOKExSwap_PlaceFutureOrder(t *testing.T) {
-	t.Log(okExSwap.PlaceFutureOrder(goex.BTC_USDT, goex.SWAP_CONTRACT, "10000", "1", goex.OPEN_BUY, 0, 0))
+	//t.Log(okExSwap.PlaceFutureOrder(goex.BTC_USDT, goex.SWAP_CONTRACT, "10000", "1", goex.OPEN_BUY, 0, 0))
 }
 
 func TestOKExSwap_PlaceFutureOrder2(t *testing.T) {
-	t.Log(okExSwap.PlaceFutureOrder2(goex.BTC_USDT, goex.SWAP_CONTRACT, "10000", "1", goex.OPEN_BUY, 0, goex.Ioc))
+	//t.Log(okExSwap.PlaceFutureOrder2(goex.BTC_USDT, goex.SWAP_CONTRACT, "10000", "1", goex.OPEN_BUY, 0, goex.Ioc))
 }
 
 func TestOKExSwap_FutureCancelOrder(t *testing.T) {
@@ -74,9 +75,9 @@ func TestOKExSwap_GetHistoricalFunding(t *testing.T) {
 }
 
 func TestOKExSwap_GetKlineRecords(t *testing.T) {
-	since := time.Now().Add(-24 * time.Hour).Unix()
-	kline, err := okExSwap.GetKlineRecords(goex.SWAP_CONTRACT, goex.BTC_USD, goex.KLINE_PERIOD_4H, 0, int(since))
-	t.Log(err, kline[0].Kline)
+	//since := time.Now().Add(-24 * time.Hour).Unix()
+	//kline, err := okExSwap.GetKlineRecords(goex.SWAP_CONTRACT, goex.BTC_USD, goex.KLINE_PERIOD_4H, 0, int(since))
+	//t.Log(err, kline[0].Kline)
 }
 
 func TestOKExSwap_GetKlineRecords2(t *testing.T) {

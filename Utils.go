@@ -6,12 +6,13 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"io/ioutil"
 	"math"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 func ToFloat64(v interface{}) float64 {
@@ -28,6 +29,19 @@ func ToFloat64(v interface{}) float64 {
 		return vF
 	default:
 		panic("to float64 error.")
+	}
+}
+
+func ToBool(v interface{}) bool {
+	if v == nil {
+		return false
+	}
+
+	switch v.(type) {
+	case bool:
+		return v.(bool)
+	default:
+		panic("to bool error.")
 	}
 }
 

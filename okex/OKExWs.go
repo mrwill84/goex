@@ -136,7 +136,7 @@ func (okV3Ws *OKExV3Ws) handle(msg []byte) error {
 			logger.Info("subscribed:", wsResp.Arg.Channel)
 			return nil
 		case "error":
-			logger.Errorf("fuck?", string(msg))
+			logger.Errorf("error? %s", string(msg))
 		default:
 			logger.Info(string(msg))
 		}

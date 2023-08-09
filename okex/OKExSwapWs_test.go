@@ -1,6 +1,7 @@
 package okex
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -24,9 +25,11 @@ func TestNewOKExV3SwapWs(t *testing.T) {
 	ok.OKExV3SwapWs.DepthCallback(func(depth *goex.Depth) {
 		t.Log(depth)
 	})
-	ok.OKExV3SwapWs.TradeCallback(func(trade *goex.Trade, s string) {
-		t.Log(s, trade)
+	ok.OKExV3SwapWs.TradeCallback(func(trade *goex.Trade) {
+		fmt.Println(trade)
+		//t.Log(trade)
 	})
-	ok.OKExV3SwapWs.SubscribeTicker(goex.BTC_USDT, goex.SWAP_CONTRACT)
+	ok.OKExV3SwapWs.SubscribeTrade(goex.BTC_USDT, goex.SWAP_CONTRACT)
+	//ok.OKExV3SwapWs.SubscribeTicker(goex.BTC_USDT, goex.SWAP_CONTRACT)
 	time.Sleep(1 * time.Minute)
 }

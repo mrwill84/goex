@@ -25,12 +25,16 @@ type Order struct {
 }
 
 type Trade struct {
-	Tid    int64        `json:"tid"`
-	Type   TradeSide    `json:"type"`
-	Amount float64      `json:"amount,string"`
-	Price  float64      `json:"price,string"`
-	Date   int64        `json:"date_ms"`
-	Pair   CurrencyPair `json:"omitempty"`
+	ContractId   string       `json:"contractId"`
+	ContractType string       `json:"contractType"`
+	Tid          int64        `json:"tid"`
+	Exchange     string       `json:"exchange"`
+	Type         TradeSide    `json:"type"`
+	Amount       float64      `json:"amount,string"`
+	Price        float64      `json:"price,string"`
+	Date         int64        `json:"date_ms"`
+	Pair         CurrencyPair `json:"omitempty"`
+	Slots        int64        `json:"slots"`
 }
 
 type SubAccount struct {
