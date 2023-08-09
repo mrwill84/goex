@@ -3,7 +3,6 @@ package binance
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -167,7 +166,7 @@ func (s *FuturesWs) handle(data []byte) error {
 		s.tickerCallFn(s.tickerHandle(m))
 		return nil
 	}
-	fmt.Println("m", m)
+	//fmt.Println("m", m)
 	if e, ok := m["e"].(string); ok && e == "aggTrade" {
 		s.tradeCalFn(s.aggTradeHandle(m))
 		return nil
@@ -227,7 +226,7 @@ func (s *FuturesWs) aggTradeHandle(m map[string]interface{}) *goex.Trade {
 	trade.Slots = goex.ToInt64(m["l"]) - goex.ToInt64(m["f"])
 	trade.Exchange = "BINANCE"
 	trade.ContractId = sym[:len(sym)-4] + "-USDT-SWAP"
-	fmt.Println("trade", trade)
+	//fmt.Println("trade", trade)
 	return &trade
 }
 
