@@ -225,7 +225,7 @@ func (ok *OKExFuture) GetFutureDepth(currencyPair CurrencyPair, contractType str
 	}
 	dep.Pair = currencyPair
 	dep.ContractType = contractType
-	dep.UTime, _ = time.Parse(time.RFC3339, response.Timestamp)
+	//dep.UTime, _ = time.Parse(time.RFC3339, response.Timestamp)
 	for _, itm := range response.Asks {
 		dep.AskList = append(dep.AskList, DepthRecord{
 			Price:  ToFloat64(itm[0]),

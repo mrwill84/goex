@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/mrwill84/goex/internal/logger"
 	"net/http"
 	"net/url"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/mrwill84/goex/internal/logger"
 
 	. "github.com/mrwill84/goex"
 )
@@ -571,9 +572,9 @@ func (dm *Hbdm) GetFutureDepth(currencyPair CurrencyPair, contractType string, s
 	dep.Pair = currencyPair
 	dep.ContractType = symbol
 
-	mills := ToUint64(ret["ts"])
-	dep.UTime = time.Unix(int64(mills/1000), int64(mills%1000)*int64(time.Millisecond))
-
+	//mills := ToUint64(ret["ts"])
+	//dep.UTime = time.Unix(int64(mills/1000), int64(mills%1000)*int64(time.Millisecond))
+	dep.Timestamp = time.Now().Unix()
 	tick, ok1 := ret["tick"].(map[string]interface{})
 	asks, ok2 := tick["asks"].([]interface{})
 	bids, ok3 := tick["bids"].([]interface{})

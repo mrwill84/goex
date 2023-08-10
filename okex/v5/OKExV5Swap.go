@@ -2,9 +2,9 @@ package okex
 
 import (
 	"fmt"
-	. "github.com/mrwill84/goex"
 	"sort"
-	"time"
+
+	. "github.com/mrwill84/goex"
 )
 
 type OKExV5Swap struct {
@@ -65,7 +65,7 @@ func (O *OKExV5Swap) GetFutureDepth(currencyPair CurrencyPair, contractType stri
 	sort.Sort(sort.Reverse(depth.AskList))
 
 	depth.Pair = currencyPair
-	depth.UTime = time.Unix(0, int64(dep.Timestamp)*1000000)
+	//depth.UTime = time.Unix(0, int64(dep.Timestamp)*1000000)
 
 	return depth, nil
 }

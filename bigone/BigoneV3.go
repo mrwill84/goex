@@ -427,7 +427,7 @@ func (bo *BigoneV3) GetDepth(size int, currencyPair goex.CurrencyPair) (*goex.De
 		depth.AskList = append(depth.AskList, dr)
 	}
 	depth.Pair = currencyPair
-	depth.UTime = time.Now()
+	//depth.UTime = time.Now()
 	return depth, nil
 }
 

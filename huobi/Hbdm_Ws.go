@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"strings"
 	"sync"
 	"time"
+
+	. "github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type WsResponse struct {
@@ -174,8 +175,8 @@ func (hbdmWs *HbdmWs) handle(msg []byte) error {
 		dep.ContractType = contract
 		dep.ContractId = hbdmWs.getContractId(contract)
 		dep.Pair = pair
-		dep.UTime = time.Unix(0, resp.Ts*int64(time.Millisecond))
-
+		//dep.UTime = time.Unix(0, resp.Ts*int64(time.Millisecond))
+		dep.Timestamp = time.Now().Unix()
 		hbdmWs.depthCallback(&dep)
 		return nil
 	}

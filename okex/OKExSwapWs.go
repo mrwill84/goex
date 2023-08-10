@@ -311,7 +311,7 @@ func (okV3Ws *OKExV3SwapWs) handle(resp *wsResp) error {
 		dep.Action = resp.Action
 		dep.Exchange = "OKEX"
 		ts := ToInt64(depthResp[0].Timestamp)
-		dep.UTime = time.Unix(ts/1000, ts%1000) //time.Parse(time.RFC3339, depthResp[0].Timestamp)
+		dep.Timestamp = ts //time.Parse(time.RFC3339, depthResp[0].Timestamp)
 
 		i, ok := container.Get(instId)
 		var snapshot *OkexSnapshot

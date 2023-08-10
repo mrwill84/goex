@@ -3,11 +3,12 @@ package bitmex
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"sort"
 	"sync"
 	"time"
+
+	. "github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type SubscribeOp struct {
@@ -142,8 +143,8 @@ func (s *SwapWs) handle(data []byte) error {
 			logger.Warn("depth data len==0 ??")
 			return nil
 		}
-
-		dep.UTime, _ = time.Parse(time.RFC3339, depthData[0].Timestamp)
+		dep.Timestamp = time.Now().Unix()
+		//dep.UTime, _ = time.Parse(time.RFC3339, depthData[0].Timestamp)
 		dep.Pair, dep.ContractType = AdaptWsSymbol(depthData[0].Symbol)
 
 		for _, item := range depthData[0].Bids {

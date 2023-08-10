@@ -1,10 +1,11 @@
 package kucoin
 
 import (
+	"time"
+
 	"github.com/Kucoin/kucoin-go-sdk"
 	. "github.com/mrwill84/goex"
 	log "github.com/mrwill84/goex/internal/logger"
-	"time"
 )
 
 func New(apiKey, apiSecret, apiPassphrase string) *KuCoin {
@@ -396,7 +397,8 @@ func (kc *KuCoin) GetDepth(size int, currency CurrencyPair) (*Depth, error) {
 	}
 	var depth Depth
 	depth.Pair = currency
-	depth.UTime = time.Now()
+	depth.Timestamp = time.Now().Unix()
+	//depth.UTime = time.Now()
 	for i, ask := range model.Asks {
 		if i < size {
 			depth.AskList = append(depth.AskList, DepthRecord{

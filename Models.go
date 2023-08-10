@@ -114,10 +114,11 @@ type Depth struct {
 	ContractId   string `json:"contract_id,omitempty"`   // for futures
 	Exchange     string
 	Pair         CurrencyPair
-	UTime        time.Time
-	Action       string
-	AskList      DepthRecords // Descending order
-	BidList      DepthRecords // Descending order
+	Timestamp    int64
+	//UTime        time.Time
+	Action  string
+	AskList DepthRecords // Descending order
+	BidList DepthRecords // Descending order
 }
 
 type APIConfig struct {

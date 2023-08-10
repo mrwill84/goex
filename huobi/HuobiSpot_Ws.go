@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"strings"
 	"sync"
 	"time"
+
+	. "github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type SpotWs struct {
@@ -106,7 +107,8 @@ func (ws *SpotWs) handle(msg []byte) error {
 
 		dep := ParseDepthFromResponse(depthResp)
 		dep.Pair = currencyPair
-		dep.UTime = time.Unix(0, resp.Ts*int64(time.Millisecond))
+		//dep.UTime = time.Unix(0, resp.Ts*int64(time.Millisecond))
+		dep.Timestamp = time.Now().Unix()
 		ws.depthCallback(&dep)
 
 		return nil

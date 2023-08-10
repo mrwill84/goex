@@ -322,7 +322,7 @@ func (bm *bitmex) GetFutureDepth(currencyPair CurrencyPair, contractType string,
 	//log.Println(resp)
 
 	dep := new(Depth)
-	dep.UTime = time.Now()
+	dep.Timestamp = time.Now().Unix()
 	dep.Pair = currencyPair
 	dep.ContractType = sym
 

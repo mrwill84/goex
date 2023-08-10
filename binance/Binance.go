@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/mrwill84/goex"
 	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	. "github.com/mrwill84/goex"
 )
 
 const (
@@ -280,7 +281,7 @@ func (bn *Binance) GetDepth(size int, currencyPair CurrencyPair) (*Depth, error)
 
 	depth := new(Depth)
 	depth.Pair = currencyPair
-	depth.UTime = time.Now()
+	depth.Timestamp = time.Now().Unix()
 	n := 0
 	for _, bid := range bids {
 		_bid := bid.([]interface{})

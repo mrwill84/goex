@@ -165,7 +165,7 @@ func (bs *BinanceSwap) GetFutureDepth(currency CurrencyPair, contractType string
 
 	depth := new(Depth)
 	depth.Pair = currency
-	depth.UTime = time.Now()
+	depth.Timestamp = time.Now().Unix()
 	n := 0
 	for _, bid := range bids {
 		_bid := bid.([]interface{})

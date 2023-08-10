@@ -2,13 +2,14 @@ package okex
 
 import (
 	"fmt"
-	"github.com/go-openapi/errors"
-	. "github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"net/url"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/go-openapi/errors"
+	. "github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type OKExSpot struct {
@@ -402,7 +403,7 @@ func (ok *OKExSpot) GetDepth(size int, currency CurrencyPair) (*Depth, error) {
 
 	dep := new(Depth)
 	dep.Pair = currency
-	dep.UTime, _ = time.Parse(time.RFC3339, response.Timestamp)
+	//dep.UTime, _ = time.Parse(time.RFC3339, response.Timestamp)
 
 	for _, itm := range response.Asks {
 		dep.AskList = append(dep.AskList, DepthRecord{

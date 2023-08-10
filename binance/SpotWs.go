@@ -3,13 +3,14 @@ package binance
 import (
 	json2 "encoding/json"
 	"fmt"
-	"github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"os"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type req struct {
@@ -141,7 +142,7 @@ func (s *SpotWs) depthHandle(data json2.RawMessage, pair goex.CurrencyPair) erro
 		return err
 	}
 
-	dep.UTime = time.Now()
+	dep.Timestamp = time.Now().Unix()
 	dep.Pair = pair
 
 	for _, bid := range depthR.Bids {

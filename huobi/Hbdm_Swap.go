@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"net/url"
 	"sort"
 	"time"
+
+	. "github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type HbdmSwap struct {
@@ -129,8 +130,8 @@ func (swap *HbdmSwap) GetFutureDepth(currencyPair CurrencyPair, contractType str
 
 	dep.Pair = currencyPair
 	dep.ContractType = contractType
-	dep.UTime = time.Unix(0, tickResponse.Ts*int64(time.Millisecond))
-
+	//dep.UTime = time.Unix(0, tickResponse.Ts*int64(time.Millisecond))
+	dep.Timestamp = time.Now().Unix()
 	for i, item := range tickResponse.Tick.Bids {
 		if i >= size {
 			break

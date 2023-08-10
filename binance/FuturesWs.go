@@ -95,7 +95,7 @@ func (s *FuturesWs) SubscribeDepth(pair goex.CurrencyPair, contractType string) 
 		sym, _ := s.base.adaptToSymbol(pair.AdaptUsdtToUsd(), contractType)
 		return s.d.Subscribe(req{
 			Method: "SUBSCRIBE",
-			Params: []string{strings.ToLower(sym) + "@depth10@100ms"},
+			Params: []string{strings.ToLower(sym) + "@depth20@100ms"},
 			Id:     2,
 		})
 	}
@@ -155,7 +155,7 @@ func (s *FuturesWs) handle(data []byte) error {
 			dep.Pair = adaptSymbolToCurrencyPair(dep.ContractType) //usdt swap
 		}
 
-		dep.UTime = time.Unix(0, goex.ToInt64(m["T"])*int64(time.Millisecond))
+		dep.Timestamp = goex.ToInt64(m["T"])
 		dep.Exchange = "BINANCE"
 		s.depthCallFn(dep)
 

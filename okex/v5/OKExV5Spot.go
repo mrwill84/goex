@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"net/url"
-	"time"
 
 	"github.com/mrwill84/goex"
 	. "github.com/mrwill84/goex"
@@ -311,7 +310,7 @@ func (ok *OKExV5Spot) GetDepth(size int, currency CurrencyPair) (*Depth, error) 
 	for _, bid := range d.Bids {
 		depth.BidList = append(depth.BidList, DepthRecord{Price: ToFloat64(bid[0]), Amount: ToFloat64(bid[1])})
 	}
-	depth.UTime = time.Unix(0, int64(d.Timestamp)*1000000)
+	//depth.UTime = time.Unix(0, int64(d.Timestamp)*1000000)
 	depth.Pair = currency
 	return depth, nil
 }

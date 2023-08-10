@@ -181,7 +181,7 @@ func (ok *OKExSwap) GetFutureDepth(currencyPair CurrencyPair, contractType strin
 	var dep Depth
 	dep.ContractType = contractType
 	dep.Pair = currencyPair
-	dep.UTime, _ = time.Parse(time.RFC3339, resp.Timestamp)
+	//dep.UTime, _ = time.Parse(time.RFC3339, resp.Timestamp)
 
 	for _, v := range resp.Bids {
 		dep.BidList = append(dep.BidList, DepthRecord{

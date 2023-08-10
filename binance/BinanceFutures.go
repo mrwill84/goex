@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"math"
 	"net/http"
 	"net/url"
@@ -13,6 +11,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	. "github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 type BaseResponse struct {
@@ -206,8 +207,7 @@ func (bs *BinanceFutures) GetFutureDepth(currencyPair CurrencyPair, contractType
 
 	dep.ContractType = contractType
 	dep.Pair = currencyPair
-	eT := int64(ret["E"].(float64))
-	dep.UTime = time.Unix(0, eT*int64(time.Millisecond))
+	dep.Timestamp = time.Now().Unix()
 
 	for _, item := range ret["asks"].([]interface{}) {
 		ask := item.([]interface{})
