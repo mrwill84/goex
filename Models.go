@@ -110,8 +110,8 @@ func (dr DepthRecords) Less(i, j int) bool {
 }
 
 type Depth struct {
-	ContractType string `json:"contract_type,omitempty"` //for futures
-	ContractId   string `json:"contract_id,omitempty"`   // for futures
+	ContractType string `json:"contractType,omitempty"` //for futures
+	ContractId   string `json:"contractId,omitempty"`   // for futures
 	Exchange     string
 	Pair         CurrencyPair
 	Timestamp    int64
