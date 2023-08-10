@@ -146,15 +146,16 @@ func (s *FuturesWs) handle(data []byte) error {
 
 	if e, ok := m["e"].(string); ok && e == "depthUpdate" {
 		dep := s.depthHandle(m["b"].([]interface{}), m["a"].([]interface{}))
-		dep.ContractType = m["s"].(string)
-		symbol, ok := m["ps"].(string)
+		dep.ContractType = "SWAP" // m["s"].(string)
+
+		symbol, ok := m["s"].(string)
 
 		if ok {
 			dep.Pair = adaptSymbolToCurrencyPair(symbol)
 		} else {
 			dep.Pair = adaptSymbolToCurrencyPair(dep.ContractType) //usdt swap
 		}
-
+		dep.ContractId = symbol[:len(symbol)-4] + "-USDT-SWAP"
 		dep.Timestamp = goex.ToInt64(m["T"])
 		dep.Exchange = "BINANCE"
 		s.depthCallFn(dep)
