@@ -32,7 +32,7 @@ type Trade struct {
 	Type         TradeSide    `json:"type"`
 	Amount       float64      `json:"amount,string"`
 	Price        float64      `json:"price,string"`
-	Date         int64        `json:"date_ms"`
+	Date         int64        `json:"date"`
 	Pair         CurrencyPair `json:"omitempty"`
 	Slots        int64        `json:"slots"`
 }
