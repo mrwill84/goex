@@ -19,8 +19,8 @@ var bs = NewBinanceSwap(&goex.APIConfig{
 		},
 		Timeout: 10 * time.Second,
 	},
-	ApiKey:       "rtsF6F4zQTJo0Lo26eGD21Tbe4LldbVy07wNKZ1bgyeAisvHOJKvz8Z79JysVnUw",
-	ApiSecretKey: "8mzTAvq4rzayrIklLg1fimimglksxU3hzUYN1uNxE1lqouXwUthOwSQVIHdlKHWv",
+	ApiKey:       "",
+	ApiSecretKey: "",
 })
 
 func TestBinanceSwap_Ping(t *testing.T) {
@@ -49,7 +49,7 @@ func TestBinanceSwap_GetFutureUserinfo(t *testing.T) {
 }
 
 func TestBinanceSwap_PlaceFutureOrder(t *testing.T) {
-	t.Log(bs.PlaceFutureOrder("waht", goex.BTC_USDT, "", "8322", "0.01", goex.OPEN_BUY, 0, 0))
+	t.Log(bs.PlaceFutureOrder("waht", goex.BTC_USDT, "", "8322", "0.01", "openlong", 0, 0))
 }
 
 func TestBinanceSwap_PlaceFutureOrder2(t *testing.T) {
@@ -83,7 +83,7 @@ func TestBinanceIntegation(t *testing.T) {
 		goex.SWAP_USDT_CONTRACT,
 		"25999",
 		"0.01",
-		goex.OPEN_BUY, 0, 1)
+		"", 0, 1)
 	fmt.Println(err)
 	bs.FutureCancelOrder(goex.BTC_USDT,
 		goex.SWAP_USDT_CONTRACT,
@@ -95,7 +95,7 @@ func TestBinanceIntegationCid(t *testing.T) {
 		goex.SWAP_USDT_CONTRACT,
 		"25999",
 		"0.01",
-		goex.OPEN_BUY, 0, 1)
+		"openlong", 0, 1)
 	fmt.Println(err)
 	fmt.Println(bs.GetFutureOrderByCid("wahtthefuck34", goex.BTC_USDT, goex.SWAP_USDT_CONTRACT))
 

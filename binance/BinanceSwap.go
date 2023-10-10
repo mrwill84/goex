@@ -309,12 +309,12 @@ func (bs *BinanceSwap) Transfer(currency Currency, transferType int, amount floa
 	return ToInt64(respmap["tranId"]), nil
 }
 
-func (bs *BinanceSwap) PlaceFutureOrder(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice int, leverRate float64) (string, error) {
+func (bs *BinanceSwap) PlaceFutureOrder(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType string, matchPrice int, leverRate float64) (string, error) {
 	fOrder, err := bs.PlaceFutureOrder2(cid, currencyPair, contractType, price, amount, openType, matchPrice, leverRate)
 	return fOrder.OrderID2, err
 }
 
-func (bs *BinanceSwap) PlaceFutureOrder2(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice int, leverRate float64) (*FutureOrder, error) {
+func (bs *BinanceSwap) PlaceFutureOrder2(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType string, matchPrice int, leverRate float64) (*FutureOrder, error) {
 	/*if contractType == SWAP_CONTRACT {
 		orderId, err := bs.f.PlaceFutureOrder(cid, currencyPair.AdaptUsdtToUsd(), contractType, price, amount, openType, matchPrice, leverRate)
 		return &FutureOrder{
@@ -332,13 +332,26 @@ func (bs *BinanceSwap) PlaceFutureOrder2(cid string, currencyPair CurrencyPair, 
 	if contractType != SWAP_USDT_CONTRACT {
 		return nil, errors.New("contract is error,please incoming SWAP_CONTRACT or SWAP_USDT_CONTRACT")
 	}*/
-
+	mapping := map[string][]string{
+		"openlong": []string{
+			"buy", "long",
+		},
+		"openshort": []string{
+			"sell", "short",
+		},
+		"closelong": []string{
+			"sell", "long",
+		},
+		"closeshort": []string{
+			"buy", "short",
+		},
+	}
 	fOrder := &FutureOrder{
-		Currency:     currencyPair,
-		ClientOid:    cid, //GenerateOrderClientId(32),
-		Price:        ToFloat64(price),
-		Amount:       ToFloat64(amount),
-		OrderType:    openType,
+		Currency:  currencyPair,
+		ClientOid: cid, //GenerateOrderClientId(32),
+		Price:     ToFloat64(price),
+		Amount:    ToFloat64(amount),
+		// OrderType:    openType,
 		LeverRate:    leverRate,
 		ContractName: contractType,
 	}
@@ -349,13 +362,9 @@ func (bs *BinanceSwap) PlaceFutureOrder2(cid string, currencyPair CurrencyPair, 
 	params.Set("symbol", pair.ToSymbol(""))
 	params.Set("quantity", amount)
 	params.Set("newClientOrderId", fOrder.ClientOid)
+	ot := strings.ToUpper(mapping[openType][0])
+	params.Set("side", ot)
 
-	switch openType {
-	case OPEN_BUY, CLOSE_SELL:
-		params.Set("side", "BUY")
-	case OPEN_SELL, CLOSE_BUY:
-		params.Set("side", "SELL")
-	}
 	if matchPrice == 0 {
 		params.Set("type", "LIMIT")
 		params.Set("price", price)
@@ -386,11 +395,11 @@ func (bs *BinanceSwap) PlaceFutureOrder2(cid string, currencyPair CurrencyPair, 
 	return fOrder, nil
 }
 
-func (bs *BinanceSwap) LimitFuturesOrder(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType int, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
+func (bs *BinanceSwap) LimitFuturesOrder(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType string, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
 	return bs.PlaceFutureOrder2(cid, currencyPair, contractType, price, amount, openType, 0, 10)
 }
 
-func (bs *BinanceSwap) MarketFuturesOrder(cid string, currencyPair CurrencyPair, contractType, amount string, openType int) (*FutureOrder, error) {
+func (bs *BinanceSwap) MarketFuturesOrder(cid string, currencyPair CurrencyPair, contractType, amount string, openType string) (*FutureOrder, error) {
 	return bs.PlaceFutureOrder2(cid, currencyPair, contractType, "0", amount, openType, 1, 10)
 }
 
