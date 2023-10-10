@@ -309,14 +309,14 @@ func (bs *BinanceSwap) Transfer(currency Currency, transferType int, amount floa
 	return ToInt64(respmap["tranId"]), nil
 }
 
-func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice int, leverRate float64) (string, error) {
-	fOrder, err := bs.PlaceFutureOrder2(currencyPair, contractType, price, amount, openType, matchPrice, leverRate)
+func (bs *BinanceSwap) PlaceFutureOrder(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice int, leverRate float64) (string, error) {
+	fOrder, err := bs.PlaceFutureOrder2(cid, currencyPair, contractType, price, amount, openType, matchPrice, leverRate)
 	return fOrder.OrderID2, err
 }
 
-func (bs *BinanceSwap) PlaceFutureOrder2(currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice int, leverRate float64) (*FutureOrder, error) {
-	if contractType == SWAP_CONTRACT {
-		orderId, err := bs.f.PlaceFutureOrder(currencyPair.AdaptUsdtToUsd(), contractType, price, amount, openType, matchPrice, leverRate)
+func (bs *BinanceSwap) PlaceFutureOrder2(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice int, leverRate float64) (*FutureOrder, error) {
+	/*if contractType == SWAP_CONTRACT {
+		orderId, err := bs.f.PlaceFutureOrder(cid, currencyPair.AdaptUsdtToUsd(), contractType, price, amount, openType, matchPrice, leverRate)
 		return &FutureOrder{
 			OrderID2:     orderId,
 			Price:        ToFloat64(price),
@@ -331,11 +331,11 @@ func (bs *BinanceSwap) PlaceFutureOrder2(currencyPair CurrencyPair, contractType
 
 	if contractType != SWAP_USDT_CONTRACT {
 		return nil, errors.New("contract is error,please incoming SWAP_CONTRACT or SWAP_USDT_CONTRACT")
-	}
+	}*/
 
 	fOrder := &FutureOrder{
 		Currency:     currencyPair,
-		ClientOid:    GenerateOrderClientId(32),
+		ClientOid:    cid, //GenerateOrderClientId(32),
 		Price:        ToFloat64(price),
 		Amount:       ToFloat64(amount),
 		OrderType:    openType,
@@ -386,22 +386,22 @@ func (bs *BinanceSwap) PlaceFutureOrder2(currencyPair CurrencyPair, contractType
 	return fOrder, nil
 }
 
-func (bs *BinanceSwap) LimitFuturesOrder(currencyPair CurrencyPair, contractType, price, amount string, openType int, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
-	return bs.PlaceFutureOrder2(currencyPair, contractType, price, amount, openType, 0, 10)
+func (bs *BinanceSwap) LimitFuturesOrder(cid string, currencyPair CurrencyPair, contractType, price, amount string, openType int, opt ...LimitOrderOptionalParameter) (*FutureOrder, error) {
+	return bs.PlaceFutureOrder2(cid, currencyPair, contractType, price, amount, openType, 0, 10)
 }
 
-func (bs *BinanceSwap) MarketFuturesOrder(currencyPair CurrencyPair, contractType, amount string, openType int) (*FutureOrder, error) {
-	return bs.PlaceFutureOrder2(currencyPair, contractType, "0", amount, openType, 1, 10)
+func (bs *BinanceSwap) MarketFuturesOrder(cid string, currencyPair CurrencyPair, contractType, amount string, openType int) (*FutureOrder, error) {
+	return bs.PlaceFutureOrder2(cid, currencyPair, contractType, "0", amount, openType, 1, 10)
 }
 
 func (bs *BinanceSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, orderId string) (bool, error) {
-	if contractType == SWAP_CONTRACT {
+	/*if contractType == SWAP_CONTRACT {
 		return bs.f.FutureCancelOrder(currencyPair.AdaptUsdtToUsd(), contractType, orderId)
 	}
 
 	if contractType != SWAP_USDT_CONTRACT {
 		return false, errors.New("contract is error,please incoming SWAP_CONTRACT or SWAP_USDT_CONTRACT")
-	}
+	}*/
 
 	currencyPair = bs.adaptCurrencyPair(currencyPair)
 	path := bs.apiV1 + ORDER_URI
@@ -558,7 +558,8 @@ func (bs *BinanceSwap) GetFuturePosition(currencyPair CurrencyPair, contractType
 	return positions, nil
 }
 
-func (bs *BinanceSwap) GetFutureOrders(orderIds []string, currencyPair CurrencyPair, contractType string) ([]FutureOrder, error) {
+func (bs *BinanceSwap) GetFutureOrderByCid(cid string, currencyPair CurrencyPair, contractType string) (*FutureOrder, error) {
+
 	if contractType == SWAP_CONTRACT {
 		return nil, errors.New("not support")
 	}
@@ -567,6 +568,42 @@ func (bs *BinanceSwap) GetFutureOrders(orderIds []string, currencyPair CurrencyP
 		return nil, errors.New("contract is error,please incoming SWAP_CONTRACT or SWAP_USDT_CONTRACT")
 	}
 
+	currencyPair1 := bs.adaptCurrencyPair(currencyPair)
+
+	params := url.Values{}
+	params.Set("symbol", currencyPair1.ToSymbol(""))
+	params.Set("origClientOrderId", cid)
+	bs.buildParamsSigned(&params)
+
+	path := bs.apiV1 + "order?" + params.Encode()
+
+	_ord, err := HttpGet2(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+
+	if err != nil {
+		idx := strings.Index(err.Error(), "Order does not exist.")
+		if idx > 0 {
+			return &FutureOrder{
+				ClientOid:  cid,
+				OrderID2:   "",
+				Price:      0,
+				Amount:     0,
+				AvgPrice:   0,
+				DealAmount: 0,
+				OrderTime:  0,
+				Status:     3,
+				Currency:   currencyPair,
+			}, nil
+		}
+		return nil, err
+	}
+	order := &FutureOrder{}
+	order = bs.parseOrder(_ord)
+	order.Currency = currencyPair
+	return order, nil
+
+}
+func (bs *BinanceSwap) GetFutureOrders(orderIds []string, currencyPair CurrencyPair, contractType string) (*FutureOrder, error) {
+
 	if len(orderIds) == 0 {
 		return nil, errors.New("orderIds is empty")
 	}
@@ -574,82 +611,30 @@ func (bs *BinanceSwap) GetFutureOrders(orderIds []string, currencyPair CurrencyP
 
 	params := url.Values{}
 	params.Set("symbol", currencyPair1.ToSymbol(""))
+	params.Set("orderId", orderIds[0])
 	bs.buildParamsSigned(&params)
 
-	path := bs.apiV1 + "allOrders?" + params.Encode()
+	path := bs.apiV1 + "order?" + params.Encode()
 
-	result, err := HttpGet3(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
-
+	_ord, err := HttpGet2(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+	fmt.Println("_ord", _ord)
 	if err != nil {
 		return nil, err
 	}
-
-	orders := make([]FutureOrder, 0)
-	for _, info := range result {
-
-		_ord := info.(map[string]interface{})
-		if _ord["symbol"].(string) != currencyPair1.ToSymbol("") {
-			continue
-		}
-		orderId := ToInt(_ord["orderId"])
-		ordId := strconv.Itoa(orderId)
-
-		for _, id := range orderIds {
-			if id == ordId {
-				order := &FutureOrder{}
-				order = bs.parseOrder(_ord)
-				order.Currency = currencyPair
-				orders = append(orders, *order)
-				break
-			}
-		}
-	}
-	return orders, nil
+	order := &FutureOrder{}
+	order = bs.parseOrder(_ord)
+	order.Currency = currencyPair
+	return order, nil
 
 }
 
+//origClientOrderId
+
 func (bs *BinanceSwap) GetFutureOrder(orderId string, currencyPair CurrencyPair, contractType string) (*FutureOrder, error) {
-	if contractType == SWAP_CONTRACT {
-		return bs.f.GetFutureOrder(orderId, currencyPair.AdaptUsdtToUsd(), contractType)
+	if contractType == SWAP_USDT_CONTRACT {
+		return bs.GetFutureOrders([]string{orderId}, currencyPair.AdaptUsdtToUsd(), contractType)
 	}
-
-	if contractType != SWAP_USDT_CONTRACT {
-		return nil, errors.New("contract is error,please incoming SWAP_CONTRACT or SWAP_USDT_CONTRACT")
-	}
-
-	currencyPair1 := bs.adaptCurrencyPair(currencyPair)
-
-	params := url.Values{}
-	params.Set("symbol", currencyPair1.ToSymbol(""))
-	params.Set("orderId", orderId)
-	bs.buildParamsSigned(&params)
-
-	path := bs.apiV1 + "allOrders?" + params.Encode()
-
-	result, err := HttpGet3(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
-
-	if err != nil {
-		return nil, err
-	}
-
-	order := &FutureOrder{}
-	ordId, _ := strconv.Atoi(orderId)
-	for _, info := range result {
-
-		_ord := info.(map[string]interface{})
-		if _ord["symbol"].(string) != currencyPair1.ToSymbol("") {
-			continue
-		}
-
-		if ToInt(_ord["orderId"]) != ordId {
-			continue
-		}
-
-		order = bs.parseOrder(_ord)
-		order.Currency = currencyPair
-		return order, nil
-	}
-	return nil, errors.New(fmt.Sprintf("not found order:%s", orderId))
+	return nil, errors.New("no implement")
 }
 
 func (bs *BinanceSwap) parseOrder(rsp map[string]interface{}) *FutureOrder {

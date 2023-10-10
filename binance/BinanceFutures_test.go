@@ -1,10 +1,11 @@
 package binance
 
 import (
-	"github.com/mrwill84/goex"
-	"github.com/mrwill84/goex/internal/logger"
 	"net/http"
 	"testing"
+
+	"github.com/mrwill84/goex"
+	"github.com/mrwill84/goex/internal/logger"
 )
 
 var baDapi = NewBinanceFutures(&goex.APIConfig{
@@ -37,15 +38,15 @@ func TestBinanceFutures_GetFutureUserinfo(t *testing.T) {
 
 func TestBinanceFutures_PlaceFutureOrder(t *testing.T) {
 	//1044675677
-	t.Log(baDapi.PlaceFutureOrder(goex.BTC_USD, goex.QUARTER_CONTRACT, "19990", "2", goex.OPEN_SELL, 0, 10))
+	t.Log(baDapi.PlaceFutureOrder("wahtthefuck", goex.BTC_USD, goex.QUARTER_CONTRACT, "19990", "2", goex.OPEN_SELL, 0, 10))
 }
 
 func TestBinanceFutures_LimitFuturesOrder(t *testing.T) {
-	t.Log(baDapi.LimitFuturesOrder(goex.BTC_USD, goex.QUARTER_CONTRACT, "20001", "2", goex.OPEN_SELL))
+	t.Log(baDapi.LimitFuturesOrder("wahtthefuck", goex.BTC_USD, goex.QUARTER_CONTRACT, "20001", "2", goex.OPEN_SELL))
 }
 
 func TestBinanceFutures_MarketFuturesOrder(t *testing.T) {
-	t.Log(baDapi.MarketFuturesOrder(goex.BTC_USD, goex.QUARTER_CONTRACT, "2", goex.OPEN_SELL))
+	t.Log(baDapi.MarketFuturesOrder("wahtthefuck", goex.BTC_USD, goex.QUARTER_CONTRACT, "2", goex.OPEN_SELL))
 }
 
 func TestBinanceFutures_GetFutureOrder(t *testing.T) {

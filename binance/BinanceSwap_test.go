@@ -1,6 +1,7 @@
 package binance
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"testing"
@@ -18,8 +19,8 @@ var bs = NewBinanceSwap(&goex.APIConfig{
 		},
 		Timeout: 10 * time.Second,
 	},
-	ApiKey:       "",
-	ApiSecretKey: "",
+	ApiKey:       "rtsF6F4zQTJo0Lo26eGD21Tbe4LldbVy07wNKZ1bgyeAisvHOJKvz8Z79JysVnUw",
+	ApiSecretKey: "8mzTAvq4rzayrIklLg1fimimglksxU3hzUYN1uNxE1lqouXwUthOwSQVIHdlKHWv",
 })
 
 func TestBinanceSwap_Ping(t *testing.T) {
@@ -48,27 +49,59 @@ func TestBinanceSwap_GetFutureUserinfo(t *testing.T) {
 }
 
 func TestBinanceSwap_PlaceFutureOrder(t *testing.T) {
-	t.Log(bs.PlaceFutureOrder(goex.BTC_USDT, "", "8322", "0.01", goex.OPEN_BUY, 0, 0))
+	t.Log(bs.PlaceFutureOrder("waht", goex.BTC_USDT, "", "8322", "0.01", goex.OPEN_BUY, 0, 0))
 }
 
 func TestBinanceSwap_PlaceFutureOrder2(t *testing.T) {
-	t.Log(bs.PlaceFutureOrder(goex.BTC_USDT,
+	t.Log(bs.PlaceFutureOrder("wahtthefuck", goex.BTC_USDT,
 		goex.SWAP_USDT_CONTRACT,
-		"28000",
+		"25999",
 		"0.01",
-		goex.OPEN_BUY, 0, 100))
+		goex.OPEN_BUY, 0, 1))
 }
 
 func TestBinanceSwap_GetFutureOrder(t *testing.T) {
-	t.Log(bs.GetFutureOrder("177597851702", goex.BTC_USDT, goex.SWAP_USDT_CONTRACT))
+	t.Log(bs.GetFutureOrder("197306870655", goex.BTC_USDT, goex.SWAP_USDT_CONTRACT))
+}
+
+func TestBinanceSwap_GetFutureOrderByCid(t *testing.T) {
+	t.Log(bs.GetFutureOrderByCid("wahtthefuck", goex.BTC_USDT, goex.SWAP_USDT_CONTRACT))
 }
 
 func TestBinanceSwap_FutureCancelOrder(t *testing.T) {
 	t.Log(bs.FutureCancelOrder(goex.BTC_USDT,
 		goex.SWAP_USDT_CONTRACT,
-		"177597851702"))
+		"197306870655"))
 }
 
 func TestBinanceSwap_GetFuturePosition(t *testing.T) {
 	t.Log(bs.GetFuturePosition(goex.BTC_USDT, ""))
+}
+
+func TestBinanceIntegation(t *testing.T) {
+	order, err := bs.PlaceFutureOrder("wahtthefuck", goex.BTC_USDT,
+		goex.SWAP_USDT_CONTRACT,
+		"25999",
+		"0.01",
+		goex.OPEN_BUY, 0, 1)
+	fmt.Println(err)
+	bs.FutureCancelOrder(goex.BTC_USDT,
+		goex.SWAP_USDT_CONTRACT,
+		order)
+}
+
+func TestBinanceIntegationCid(t *testing.T) {
+	order, err := bs.PlaceFutureOrder("wahtthefuck34", goex.BTC_USDT,
+		goex.SWAP_USDT_CONTRACT,
+		"25999",
+		"0.01",
+		goex.OPEN_BUY, 0, 1)
+	fmt.Println(err)
+	fmt.Println(bs.GetFutureOrderByCid("wahtthefuck34", goex.BTC_USDT, goex.SWAP_USDT_CONTRACT))
+
+	bs.FutureCancelOrder(goex.BTC_USDT,
+		goex.SWAP_USDT_CONTRACT,
+		order)
+	fmt.Println(bs.GetFutureOrderByCid("wahtthefuck34", goex.BTC_USDT, goex.SWAP_USDT_CONTRACT))
+
 }

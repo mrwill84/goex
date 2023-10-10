@@ -170,7 +170,7 @@ type Binance struct {
 
 func (bn *Binance) buildParamsSigned(postForm *url.Values) error {
 	postForm.Set("recvWindow", "60000")
-	tonce := strconv.FormatInt(time.Now().UnixNano()+bn.timeOffset, 10)[0:13]
+	tonce := strconv.FormatInt(time.Now().UnixMilli(), 10)
 	postForm.Set("timestamp", tonce)
 	payload := postForm.Encode()
 	sign, _ := GetParamHmacSHA256Sign(bn.secretKey, payload)
