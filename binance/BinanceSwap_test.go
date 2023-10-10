@@ -57,7 +57,7 @@ func TestBinanceSwap_PlaceFutureOrder2(t *testing.T) {
 		goex.SWAP_USDT_CONTRACT,
 		"25999",
 		"0.01",
-		goex.OPEN_BUY, 0, 1))
+		"openlong", 0, 1))
 }
 
 func TestBinanceSwap_GetFutureOrder(t *testing.T) {
