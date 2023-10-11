@@ -108,7 +108,7 @@ func (s *FuturesWs) SubscribeTicker(pair goex.CurrencyPair, contractType string)
 		s.connectUsdtFutures()
 		return s.f.Subscribe(req{
 			Method: "SUBSCRIBE",
-			Params: []string{pair.AdaptUsdToUsdt().ToLower().ToSymbol("") + "@ticker"},
+			Params: []string{pair.AdaptUsdToUsdt().ToLower().ToSymbol("") + "@miniTicker"},
 			Id:     1,
 		})
 	default:
@@ -163,7 +163,7 @@ func (s *FuturesWs) handle(data []byte) error {
 		return nil
 	}
 
-	if e, ok := m["e"].(string); ok && e == "24hrTicker" {
+	if e, ok := m["e"].(string); ok && e == "24hrMiniTicker" {
 		s.tickerCallFn(s.tickerHandle(m))
 		return nil
 	}
@@ -235,7 +235,7 @@ func (s *FuturesWs) tickerHandle(m map[string]interface{}) *goex.FutureTicker {
 	var ticker goex.FutureTicker
 	ticker.Ticker = new(goex.Ticker)
 
-	symbol, ok := m["ps"].(string)
+	symbol, ok := m["s"].(string)
 	if ok {
 		ticker.Pair = adaptSymbolToCurrencyPair(symbol)
 	} else {
