@@ -558,6 +558,7 @@ func (bs *BinanceSwap) GetFutureOrderByCid(cid string, currencyPair CurrencyPair
 	order := &FutureOrder{}
 	order = bs.parseOrder(_ord)
 	order.Currency = currencyPair
+	order.ContractName = currencyPair.ToSymbol("-") + "-SWAP"
 	return order, nil
 
 }
@@ -583,6 +584,7 @@ func (bs *BinanceSwap) GetFutureOrders(orderIds []string, currencyPair CurrencyP
 	order := &FutureOrder{}
 	order = bs.parseOrder(_ord)
 	order.Currency = currencyPair
+	order.ContractName = currencyPair.ToSymbol("-") + "-SWAP"
 	return order, nil
 
 }
@@ -602,7 +604,7 @@ func (bs *BinanceSwap) parseOrder(rsp map[string]interface{}) *FutureOrder {
 	order.DealAmount = ToFloat64(rsp["executedQty"])
 	order.AvgPrice = ToFloat64(rsp["avgPrice"])
 	order.OrderTime = ToInt64(rsp["time"])
-
+	order.ContractName = rsp["symbol"].(string)
 	status := rsp["status"].(string)
 	order.Status = bs.parseOrderStatus(status)
 	order.OrderID = ToInt64(rsp["orderId"])
