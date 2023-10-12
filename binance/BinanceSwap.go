@@ -593,7 +593,7 @@ func (bs *BinanceSwap) GetFutureOrders(orderIds []string, currencyPair CurrencyP
 
 func (bs *BinanceSwap) GetFutureOrder(orderId string, currencyPair CurrencyPair, contractType string) (*FutureOrder, error) {
 
-	return bs.GetFutureOrders([]string{orderId}, currencyPair.AdaptUsdtToUsd(), contractType)
+	return bs.GetFutureOrders([]string{orderId}, currencyPair, contractType)
 
 }
 
